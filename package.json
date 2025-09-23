@@ -1,0 +1,16 @@
+{
+  "name": "dev-meme-api",
+  "version": "1.0.0",
+  "description": "An API that serves developer memes",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "Codex March 2025 cohort",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
