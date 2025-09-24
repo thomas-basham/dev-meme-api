@@ -43,12 +43,35 @@ const memes = [
 // middleware to parse JSON bodies
 app.use(express.json());
 
+app.use((request, response, next) => {
+  console.log(
+    `${request.method} ${request.url} at ${new Date().toISOString()}`
+  );
+  next();
+});
+
 app.get("/", (request, response) => {
   response.send("Hello World!");
 });
 
 app.get("/memes", (request, response) => {
   response.json(memes);
+});
+
+app.get("/memes/:id", (request, response) => {
+  const { id } = request.params;
+
+  const foundMeme = memes.find((meme) => {
+    return meme.id === parseInt(id);
+  });
+
+  if (!foundMeme) {
+    return response
+      .status(404)
+      .json({ error: "The meme with an id of " + id + " does not exist" });
+  }
+
+  response.json(foundMeme);
 });
 
 app.post("/memes", (request, response) => {
@@ -67,5 +90,5 @@ app.post("/memes", (request, response) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port http://localhost:${port}`);
+  console.log(`Dev Meme API listening on port http://localhost:${port}`);
 });
