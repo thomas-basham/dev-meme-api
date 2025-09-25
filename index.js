@@ -43,6 +43,7 @@ const memes = [
 // middleware to parse JSON bodies
 app.use(express.json());
 
+// middleware for logging
 app.use((request, response, next) => {
   console.log(
     `${request.method} ${request.url} at ${new Date().toISOString()}`
@@ -50,14 +51,17 @@ app.use((request, response, next) => {
   next();
 });
 
+// root route
 app.get("/", (request, response) => {
-  response.send("Hello World!");
+  response.send("Welcome to the dev meme API");
 });
 
+// route to get all memes
 app.get("/memes", (request, response) => {
   response.json(memes);
 });
 
+// route to get a meme by id
 app.get("/memes/:id", (request, response) => {
   const { id } = request.params;
 
@@ -66,19 +70,20 @@ app.get("/memes/:id", (request, response) => {
   });
 
   if (!foundMeme) {
-    return response
-      .status(404)
-      .json({ error: "The meme with an id of " + id + " does not exist" });
+    throw new Error({
+      error: "The meme with an id of " + id + " does not exist",
+    });
   }
 
   response.json(foundMeme);
 });
 
+// route add a meme
 app.post("/memes", (request, response) => {
   const { title, url } = request.body;
 
   if (!title || !url) {
-    return response.status(400).json({ error: "Title and url are required" });
+    throw new Error("Title and url are required");
   }
 
   const newMeme = { id: memes.length + 1, title, url };
@@ -87,6 +92,46 @@ app.post("/memes", (request, response) => {
   console.log(memes);
 
   response.status(201).json(newMeme);
+});
+
+// route to update a meme by id
+app.put("/memes/:id", (request, response) => {
+  const { id } = request.params;
+  const { title, url } = request.body;
+
+  const foundMeme = memes.find((meme) => {
+    return meme.id === parseInt(id);
+  });
+
+  if (!foundMeme) {
+    throw new Error(`The meme with an id of ${id} does not exist`);
+  }
+
+  // update the found meme
+  foundMeme.title = title;
+  foundMeme.url = url;
+
+  console.log(memes);
+
+  response.json(foundMeme);
+});
+
+// // 404 error handler
+app.use((request, response, next) => {
+  response.status(404).json({
+    error: "We could not find the url you are looking for",
+    message: `route ${request.originalUrl} not found`,
+  });
+});
+
+// general error handler
+app.use((error, request, response, next) => {
+  console.log("ERROR! Something broke", error.stack);
+
+  response.status(500).json({
+    error: error.name,
+    message: error.message,
+  });
 });
 
 app.listen(port, () => {
