@@ -51,6 +51,7 @@ app.use((request, response, next) => {
   next();
 });
 
+// ****************** ROUTES ******************
 // root route
 app.get("/", (request, response) => {
   response.send("Welcome to the dev meme API");
@@ -114,6 +115,19 @@ app.put("/memes/:id", (request, response) => {
   console.log(memes);
 
   response.json(foundMeme);
+});
+
+// route to delete a meme by id
+app.delete("/memes/:id", (request, response) => {
+  const { id } = request.params;
+
+  const index = memes.findIndex((meme) => {
+    return meme.id === parseInt(id);
+  });
+
+  const deletedMeme = memes.splice(index, 1);
+
+  response.json(deletedMeme);
 });
 
 // // 404 error handler
