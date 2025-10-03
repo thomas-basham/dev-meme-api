@@ -11,6 +11,10 @@
   "author": "Codex March 2025 cohort",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^6.16.3",
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.16.3"
   }
 }
