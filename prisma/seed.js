@@ -1,5 +1,4 @@
-// import { seedData } from "../seedData.js";
-
+import { seedData } from "../seedData.js";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -7,17 +6,14 @@ const prisma = new PrismaClient();
 async function main() {
   const user = await prisma.user.create({
     data: {
-      username: "Thomas",
+      username: "SpongeBob",
       password: "pass123",
     },
   });
 
-  await prisma.meme.create({
-    data: {
-      title: "AI and Calculators",
-      url: "https://march25-cohort-meme-bucket.s3.us-east-1.amazonaws.com/dev+memes/ai-and-calculators.webp",
-      userId: user.id,
-    },
+  await prisma.meme.createMany({
+    data: seedData,
+    skipDuplicates: true,
   });
 }
 

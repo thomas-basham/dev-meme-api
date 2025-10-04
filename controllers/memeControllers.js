@@ -1,13 +1,20 @@
 import { memes } from "../model/memeData.js";
-export const getAllMemes = (request, response) => {
-  response.json(memes);
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+export const getAllMemes = async (request, response) => {
+  const dbMemes = await prisma.meme.findMany();
+  response.json(dbMemes);
 };
 
-export const getMemeById = (request, response) => {
+export const getMemeById = async (request, response) => {
   const { id } = request.params;
 
-  const foundMeme = memes.find((meme) => {
-    return meme.id === parseInt(id);
+  const foundMeme = await prisma.meme.findUnique({
+    where: {
+      id: parseInt(id),
+    },
   });
 
   if (!foundMeme) {
@@ -19,50 +26,53 @@ export const getMemeById = (request, response) => {
   response.json(foundMeme);
 };
 
-export const addMeme = (request, response) => {
-  const { title, url } = request.body;
+export const addMeme = async (request, response) => {
+  const { title, url, userId } = request.body;
 
   if (!title || !url) {
     throw new Error("Title and url are required");
   }
 
-  const newMeme = { id: memes.length + 1, title, url };
-  memes.push(newMeme);
-
-  console.log(memes);
+  const newMeme = await prisma.meme.create({
+    data: { title, url, userId },
+  });
 
   response.status(201).json(newMeme);
 };
 
-export const updateMemeById = (request, response) => {
+export const updateMemeById = async (request, response) => {
   const { id } = request.params;
   const { title, url } = request.body;
 
-  const foundMeme = memes.find((meme) => {
-    return meme.id === parseInt(id);
+  // const foundMeme = memes.find((meme) => {
+  //   return meme.id === parseInt(id);
+  // });
+
+  const updateMeme = await prisma.meme.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      title,
+      url,
+    },
   });
 
-  if (!foundMeme) {
+  if (!updateMeme) {
     throw new Error(`The meme with an id of ${id} does not exist`);
   }
 
-  // update the found meme
-  foundMeme.title = title;
-  foundMeme.url = url;
-
-  console.log(memes);
-
-  response.json(foundMeme);
+  response.json(updateMeme);
 };
 
-export const deleteMemeById = (request, response) => {
+export const deleteMemeById = async (request, response) => {
   const { id } = request.params;
 
-  const index = memes.findIndex((meme) => {
-    return meme.id === parseInt(id);
+  const deleteMeme = await prisma.meme.delete({
+    where: {
+      id: parseInt(id),
+    },
   });
 
-  const deletedMeme = memes.splice(index, 1);
-
-  response.json(deletedMeme);
+  response.json(deleteMeme);
 };
