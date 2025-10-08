@@ -1,6 +1,4 @@
-import { memes } from "../model/memeData.js";
 import { PrismaClient } from "@prisma/client";
-
 const prisma = new PrismaClient();
 
 export const getAllMemes = async (request, response) => {
@@ -27,14 +25,14 @@ export const getMemeById = async (request, response) => {
 };
 
 export const addMeme = async (request, response) => {
-  const { title, url, userId } = request.body;
+  const { title, url } = request.body;
 
   if (!title || !url) {
     throw new Error("Title and url are required");
   }
 
   const newMeme = await prisma.meme.create({
-    data: { title, url, userId },
+    data: { title, url, userId: request.user.userId }, // use authenticated userID
   });
 
   response.status(201).json(newMeme);
