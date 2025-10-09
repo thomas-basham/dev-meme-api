@@ -5,6 +5,7 @@ import {
   addMeme,
   updateMemeById,
   deleteMemeById,
+  userLikesMeme,
 } from "../controllers/memeControllers.js";
 import jwt from "jsonwebtoken";
 
@@ -46,5 +47,8 @@ router.put("/:id", updateMemeById);
 
 // route to delete a meme by id
 router.delete("/:id", deleteMemeById);
+
+// route to like a meme
+router.post("/:id/like", authenticate, userLikesMeme);
 
 export default router;

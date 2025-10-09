@@ -74,3 +74,37 @@ export const deleteMemeById = async (request, response) => {
 
   response.json(deleteMeme);
 };
+
+export const userLikesMeme = async (request, response) => {
+  const { id } = request.params;
+
+  // check if the user already liked the meme
+  const existingLike = await prisma.userLikesMeme.findUnique({
+    where: {
+      userId_memeId: {
+        userId: request.user.userId,
+        memeId: parseInt(id),
+      },
+    },
+  });
+
+  if (existingLike) {
+    // if the like exists, delete it to unlike
+    await prisma.userLikesMeme.delete({
+      where: {
+        id: existingLike.id,
+      },
+    });
+
+    response.json({ message: `User ${request.user.id} unliked meme ${id}` });
+  } else {
+    // if the like does not exist, add a row to userLikesMeme to like
+    await prisma.userLikesMeme.create({
+      data: {
+        userId: request.user.userId,
+        memeId: parseInt(id),
+      },
+    });
+    response.json({ message: `User ${request.user.userId} liked meme ${id}` });
+  }
+};
