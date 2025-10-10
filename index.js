@@ -1,9 +1,12 @@
 import express from "express";
 import router from "./routes/memeRoutes.js";
 import authRouter from "./routes/authRoutes.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 // ****************** MIDDLEWARE ******************
 // middleware to parse JSON bodies
@@ -49,5 +52,5 @@ app.use((error, request, response, next) => {
 });
 
 app.listen(port, () => {
-  console.log(`Dev Meme API listening on port http://localhost:${port}`);
+  console.log(`Dev Meme API listening on http://localhost:${port}`);
 });

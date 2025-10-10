@@ -52,7 +52,7 @@ export const userLogin = async (request, response) => {
       userId: user.id,
       role: "regular", // we'll use the role later when we implement that feature
     },
-    "secret",
+    process.env.JWT_SECRET,
     { expiresIn: "1h" }
   );
 

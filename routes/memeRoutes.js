@@ -19,7 +19,7 @@ const authenticate = (request, response, next) => {
   const token = authHeader.split(" ")[1];
 
   // verify a token symmetric
-  jwt.verify(token, "secret", function (err, decoded) {
+  jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
     if (err)
       response.status(401).json({ error: "invalid credentials. JWT missing" });
 
