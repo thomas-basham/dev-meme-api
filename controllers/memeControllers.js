@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+import { memeSchema } from "../utils/validation.js";
+
 export const getAllMemes = async (request, response) => {
   const dbMemes = await prisma.meme.findMany();
   response.json(dbMemes);
@@ -27,8 +29,9 @@ export const getMemeById = async (request, response) => {
 export const addMeme = async (request, response) => {
   const { title, url } = request.body;
 
-  if (!title || !url) {
-    throw new Error("Title and url are required");
+  const { error } = memeSchema.validate(request.body);
+  if (error) {
+    throw new Error(error.details[0].message);
   }
 
   const newMeme = await prisma.meme.create({
@@ -42,9 +45,10 @@ export const updateMemeById = async (request, response) => {
   const { id } = request.params;
   const { title, url } = request.body;
 
-  // const foundMeme = memes.find((meme) => {
-  //   return meme.id === parseInt(id);
-  // });
+  const { error } = memeSchema.validate(request.body);
+  if (error) {
+    throw new Error(error.details[0].message);
+  }
 
   const updateMeme = await prisma.meme.update({
     where: {
