@@ -4,7 +4,7 @@ import type { Meme } from "../types/index.js";
 
 const prisma = new PrismaClient();
 
-import { memeSchema }  from "../utils/validation.js";
+import { memeSchema } from "../utils/validation.js";
 
 export const getAllMemes = async (
   request: Request,
@@ -42,8 +42,11 @@ export const addMeme = async (request: Request, response: Response) => {
   }
 
   const newMeme = await prisma.meme.create({
-    // @ts-ignore
-    data: { title, url, userId: parseInt(request.user.userId) } as Meme, // use authenticated userID
+    data: {
+      title,
+      url,
+      userId: parseInt(request?.user?.userId as string),
+    } as Meme, // use authenticated userID
   });
 
   response.status(201).json(newMeme);
@@ -109,20 +112,24 @@ export const userLikesMeme = async (request: Request, response: Response) => {
       },
     });
 
-    // @ts-ignore
-    response.json({ message: `User ${request.user.id} unliked meme ${id}` });
+    response.json({
+      message: `User ${parseInt(
+        request?.user?.userId as string
+      )} unliked meme ${id}`,
+    });
   } else {
     // if the like does not exist, add a row to userLikesMeme to like
     await prisma.userLikesMeme.create({
       data: {
-        // @ts-ignore
-
-        userId: request.user.userId,
+        userId: parseInt(request?.user?.userId as string),
 
         memeId: parseInt(id as string),
       },
     });
-    // @ts-ignore
-    response.json({ message: `User ${request.user.userId} liked meme ${id}` });
+    response.json({
+      message: `User ${parseInt(
+        request?.user?.userId as string
+      )} liked meme ${id}`,
+    });
   }
 };
