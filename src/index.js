@@ -2,23 +2,46 @@ import express from "express";
 import router from "./routes/memeRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import dotenv from "dotenv";
+import {
+  limiter,
+  checkApiKey,
+  logging,
+  notFoundError,
+  generalError,
+} from "./middleware/middleware.js";
+
+import expressJSDocSwagger from "express-jsdoc-swagger";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
 
+expressJSDocSwagger(app)({
+  info: {
+    version: "1.0.0",
+    title: "Meme API",
+    description: "Docs for Meme API",
+  },
+  swaggerUIPath: "/docs",
+  baseDir: process.cwd(), // returns the current working directory
+  filesPattern: "./src/routes/**/*.{js,ts}",
+  exposeApiDocs: true,
+  apiDocsPath: "/api-docs.json",
+});
 // ****************** MIDDLEWARE ******************
 // middleware to parse JSON bodies
 app.use(express.json());
 
 // middleware for logging
-app.use((request, response, next) => {
-  console.log(
-    `${request.method} ${request.url} at ${new Date().toISOString()}`
-  );
-  next();
-});
+app.use(logging);
+
+// Apply the rate limiting middleware to all requests.
+app.use(limiter);
+
+// Apply API key security to all requests
+app.use(checkApiKey);
+// Api docs
 
 // ****************** ROUTES ******************
 // root route
@@ -32,24 +55,12 @@ app.use("/memes", router);
 // auth routes
 app.use("/auth", authRouter);
 
-// // 404 error handler
-app.use((request, response, next) => {
-  response.status(404).json({
-    error: "We could not find the url you are looking for",
-    message: `route ${request.originalUrl} not found`,
-  });
-});
-
 // ****************** ERROR HANDLING ******************
-// general error handler
-app.use((error, request, response, next) => {
-  console.log("ERROR! Something broke", error.stack);
+// // 404 error handler
+app.use(notFoundError);
 
-  response.status(500).json({
-    error: error.name,
-    message: error.message,
-  });
-});
+// general error handler
+app.use(generalError);
 
 app.listen(port, () => {
   console.log(`Dev Meme API listening on http://localhost:${port}`);

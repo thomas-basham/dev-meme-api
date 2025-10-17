@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --loader ts-node/esm ./src/index.js",
+    "dev": "nodemon --watch src --exec 'node --loader ts-node/esm src/index.js --no-warnings'",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js"
   },
@@ -16,6 +16,8 @@
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "express-jsdoc-swagger": "^1.8.0",
+    "express-rate-limit": "^8.1.0",
     "joi": "^18.0.1",
     "jsonwebtoken": "^9.0.2"
   },
