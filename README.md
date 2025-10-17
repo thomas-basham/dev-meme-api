@@ -4,7 +4,7 @@ A private API that manages a meme gallery SQL Database.
 
 **Author**: Codex March 2025 cohort
 
-**Live API:** [Live url](https://dev-meme-api.onrender.com/)
+**Live API:** [dev-meme-api.onrender.com](https://dev-meme-api.onrender.com/)
 
 ## How to run
 
