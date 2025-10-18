@@ -7,48 +7,49 @@ import {
   deleteMemeById,
   userLikesMeme,
 } from "../controllers/memeControllers.js";
+import { authenticate, checkApiKey } from "../middleware/middleware.js";
 import jwt from "jsonwebtoken";
 
 // create our router to hold all memes routes
 const router = express.Router();
 
-// middleware to authenticate users
-const authenticate = (request, response, next) => {
-  const authHeader = request.headers.authorization;
-
-  const token = authHeader.split(" ")[1];
-
-  // verify a token symmetric
-  jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
-    if (err)
-      response.status(401).json({ error: "invalid credentials. JWT missing" });
-
-    // add user information from JWT
-    request.user = decoded; // create user property in request object
-
-    next();
-  });
-};
-
 // ****************** ROUTES ******************
+/**
+ * A Meme type
+ * @typedef {object} Meme
+ * @property {number} id - Meme id
+ * @property {string} title.required - The title
+ * @property {string} url.required - The url
+ * @property {number} userId - The user Id foreign key relationship
+ */
 
-// route to get all memes
+/**
+ * GET /memes
+ * @summary Returns an array of Meme objects
+ * @tags Memes
+ * @return {array<Meme>} 200 - success response - application/json
+ */
 router.get("/", getAllMemes);
 
 // route to get a meme by id
 router.get("/:id", getMemeById);
 
 // *** protected routes ***
-// route add a meme
-router.post("/", authenticate, addMeme);
+/**
+ * POST /memes
+ * @param {Meme} request.body.required - Meme info
+ * @tags Memes
+ * @return {Meme} 200 - meme response
+ */
+router.post("/", checkApiKey, authenticate, addMeme);
 
 // route to update a meme by id
-router.put("/:id", updateMemeById);
+router.put("/:id", checkApiKey, authenticate, updateMemeById);
 
 // route to delete a meme by id
-router.delete("/:id", deleteMemeById);
+router.delete("/:id", checkApiKey, authenticate, deleteMemeById);
 
 // route to like a meme
-router.post("/:id/like", authenticate, userLikesMeme);
+router.post("/:id/like", checkApiKey, authenticate, userLikesMeme);
 
 export default router;

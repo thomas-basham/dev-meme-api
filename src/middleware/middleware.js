@@ -1,4 +1,5 @@
 import { rateLimit } from "express-rate-limit";
+import jwt from "jsonwebtoken";
 
 export const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -18,10 +19,10 @@ export const checkApiKey = (request, response, next) => {
   } else {
     // send a access denied response
     console.log("Missing api key");
-    next();
 
-    // response.status(403).json({ error: "Access denied. Need API Key" });
+    response.status(403).json({ error: "Access denied. Need API Key" });
   }
+  next();
 };
 
 export const logging = (request, response, next) => {
@@ -44,5 +45,23 @@ export const generalError = (error, request, response, next) => {
   response.status(500).json({
     error: error.name,
     message: error.message,
+  });
+};
+
+// middleware to authenticate users
+export const authenticate = (request, response, next) => {
+  const authHeader = request.headers.authorization;
+
+  const token = authHeader.split(" ")[1];
+
+  // verify a token symmetric
+  jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
+    if (err)
+      response.status(401).json({ error: "invalid credentials. JWT missing" });
+
+    // add user information from JWT
+    request.user = decoded; // create user property in request object
+
+    next();
   });
 };

@@ -20,15 +20,17 @@ const port = process.env.PORT;
 expressJSDocSwagger(app)({
   info: {
     version: "1.0.0",
-    title: "Meme API",
-    description: "Docs for Meme API",
+    title: "Dev Meme API",
+    description: "Docs for Dev Meme API",
   },
+  security: { ApiKeyAuth: { type: "apiKey", in: "header", name: "x-api-key" } },
   swaggerUIPath: "/docs",
   baseDir: process.cwd(), // returns the current working directory
   filesPattern: "./src/routes/**/*.{js,ts}",
   exposeApiDocs: true,
   apiDocsPath: "/api-docs.json",
 });
+
 // ****************** MIDDLEWARE ******************
 // middleware to parse JSON bodies
 app.use(express.json());
@@ -40,8 +42,7 @@ app.use(logging);
 app.use(limiter);
 
 // Apply API key security to all requests
-app.use(checkApiKey);
-// Api docs
+// app.use(checkApiKey);
 
 // ****************** ROUTES ******************
 // root route

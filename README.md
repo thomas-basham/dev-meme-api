@@ -6,6 +6,10 @@ A private API that manages a meme gallery SQL Database.
 
 **Live API:** [dev-meme-api.onrender.com](https://dev-meme-api.onrender.com/)
 
+## Documentation
+
+[dev-meme-api.onrender.com/docs](https://dev-meme-api.onrender.com/docs)
+
 ## How to run
 
 Create `.env` file with contents from .env.example
