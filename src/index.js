@@ -33,18 +33,12 @@ expressJSDocSwagger(app)({
 
 // ****************** MIDDLEWARE ******************
 // CORS
-const allowedOrigins = [
-  "https://dazngisx4n9s7.cloudfront.net", // CloudFront
-  "http://dev-meme-gallery.s3-website-us-east-1.amazonaws.com", // S3 website
-  "http://localhost:5173", // Vite dev
-];
 let corsOptions = {
-  origin(origin, cb) {
-    // allow non-browser requests (like curl/postman with no Origin)
-    if (!origin) return cb(null, true);
-    if (allowedOrigins.includes(origin)) return cb(null, true);
-    return cb(new Error(`Not allowed by CORS: ${origin}`));
-  },
+  origin: [
+    "https://dazngisx4n9s7.cloudfront.net", // CloudFront
+    "http://dev-meme-gallery-client.s3-website-us-east-1.amazonaws.com", // S3 website
+    "http://localhost:5173", // Vite dev
+  ],
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
