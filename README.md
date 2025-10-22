@@ -24,6 +24,8 @@ Create `.env` file with contents from .env.example
   - Returns an array of memes
 - POST /memes
   - Add a meme to SQL library
+- PUT /memes
+  - Update a meme
 
 ## Tech Used
 
