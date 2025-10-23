@@ -22,7 +22,6 @@ export const checkApiKey = (request, response, next) => {
 
     response.status(403).json({ error: "Access denied. Need API Key" });
   }
-  next();
 };
 
 export const logging = (request, response, next) => {
