@@ -35,7 +35,7 @@ expressJSDocSwagger(app)({
 // CORS
 let corsOptions = {
   origin: [
-    "https://dazngisx4n9s7.cloudfront.net", // CloudFront
+    "https://d12y5e5t4a1z93.cloudfront.net", // CloudFront
     "http://dev-meme-gallery-client.s3-website-us-east-1.amazonaws.com", // S3 website
     "http://localhost:5173", // Vite dev
   ],
