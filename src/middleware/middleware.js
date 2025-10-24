@@ -19,7 +19,6 @@ export const checkApiKey = (request, response, next) => {
   } else {
     // send a access denied response
     console.log("Missing api key");
-
     response.status(403).json({ error: "Access denied. Need API Key" });
   }
 };

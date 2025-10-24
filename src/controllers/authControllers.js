@@ -57,5 +57,5 @@ export const userLogin = async (request, response) => {
   );
 
   // respond with the JWT
-  response.json({ token });
+  response.json({ token, username, id: user.id });
 };
